@@ -27,6 +27,7 @@ class SectionResource extends Resource
     protected static ?string $pluralModelLabel = 'phân mục';
 
     protected static ?int $navigationSort = 1;
+
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
@@ -46,10 +47,7 @@ class SectionResource extends Resource
 
                         Forms\Components\Select::make('status')
                             ->label('Trạng thái')
-                            ->options([
-                                'visible' => 'Hiển thị',
-                                'hidden' => 'Ẩn',
-                            ])
+                            ->options(Section::getStatuses())
                             ->default('hidden')
                             ->required(),
                     ])->columns(2),
@@ -100,10 +98,7 @@ class SectionResource extends Resource
 
                 Tables\Columns\SelectColumn::make('status')
                     ->label('Trạng thái')
-                    ->options([
-                        'visible' => 'Hiển thị',
-                        'hidden' => 'Ẩn',
-                    ])
+                    ->options(Section::getStatuses())
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('created_at')
@@ -120,10 +115,7 @@ class SectionResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
                     ->label('Trạng thái')
-                    ->options([
-                        'visible' => 'Hiển thị',
-                        'hidden' => 'Ẩn',
-                    ]),
+                    ->options(Section::getStatuses()),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()

@@ -25,6 +25,12 @@ class VersionsRelationManager extends RelationManager
                     ->required()
                     ->maxLength(255),
 
+                Forms\Components\FileUpload::make('thumbnail')
+                    ->label('Ảnh đại diện')
+                    ->image()
+                    ->directory('versions')
+                    ->preserveFilenames(),
+
                 Forms\Components\TextInput::make('price')
                     ->label('Giá bán')
                     ->required()
@@ -32,17 +38,28 @@ class VersionsRelationManager extends RelationManager
                     ->prefix('VND')
                     ->minValue(0),
 
-                Forms\Components\TextInput::make('stock')
-                    ->label('Tồn kho')
-                    ->required()
+                Forms\Components\TextInput::make('discount_percentage')
+                    ->label('Phần trăm giảm giá')
                     ->numeric()
-                    ->minValue(0),
+                    ->default(0)
+                    ->minValue(0)
+                    ->maxValue(100)
+                    ->suffix('%'),
 
-                Forms\Components\TextInput::make('sku')
-                    ->label('Mã SKU')
+                Forms\Components\Toggle::make('is_in_stock')
+                    ->label('Còn hàng')
+                    ->default(true)
+                    ->onColor('success')
+                    ->offColor('danger'),
+
+                Forms\Components\Select::make('status')
+                    ->label('Trạng thái')
                     ->required()
-                    ->unique(ignoreRecord: true)
-                    ->maxLength(255),
+                    ->default('available')
+                    ->options([
+                        'available' => 'Còn hàng',
+                        'unavailable' => 'Không có sẵn',
+                    ]),
             ]);
     }
 
@@ -50,6 +67,12 @@ class VersionsRelationManager extends RelationManager
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('thumbnail')
+                    ->label('Ảnh')
+                    ->defaultImageUrl(url('/images/placeholder.png'))
+                    ->width(100)
+                    ->height(100),
+
                 Tables\Columns\TextColumn::make('name')
                     ->label('Tên phiên bản')
                     ->searchable()
@@ -60,14 +83,23 @@ class VersionsRelationManager extends RelationManager
                     ->money('VND')
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('stock')
-                    ->label('Tồn kho')
+                Tables\Columns\TextColumn::make('discount_percentage')
+                    ->label('Giảm giá')
                     ->numeric()
+                    ->suffix('%')
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('sku')
-                    ->label('Mã SKU')
-                    ->searchable()
+                Tables\Columns\IconColumn::make('is_in_stock')
+                    ->label('Còn hàng')
+                    ->boolean()
+                    ->sortable(),
+
+                Tables\Columns\BadgeColumn::make('status')
+                    ->label('Trạng thái')
+                    ->colors([
+                        'success' => 'available',
+                        'danger' => 'unavailable',
+                    ])
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('created_at')
@@ -77,7 +109,18 @@ class VersionsRelationManager extends RelationManager
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Trạng thái')
+                    ->options([
+                        'available' => 'Còn hàng',
+                        'unavailable' => 'Không có sẵn',
+                    ]),
+
+                Tables\Filters\TernaryFilter::make('is_in_stock')
+                    ->label('Tình trạng hàng')
+                    ->placeholder('Tất cả')
+                    ->trueLabel('Còn hàng')
+                    ->falseLabel('Hết hàng'),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()

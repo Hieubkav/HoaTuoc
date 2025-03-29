@@ -22,6 +22,22 @@ class Section extends Model
     ];
 
     /**
+     * Available status values
+     */
+    protected static $statuses = [
+        'visible' => 'Hiển thị',
+        'hidden' => 'Ẩn',
+    ];
+
+    /**
+     * Get all available statuses.
+     */
+    public static function getStatuses(): array
+    {
+        return static::$statuses;
+    }
+
+    /**
      * Get all categories in this section.
      */
     public function categories()

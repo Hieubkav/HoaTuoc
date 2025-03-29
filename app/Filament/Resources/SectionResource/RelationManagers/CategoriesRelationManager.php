@@ -2,11 +2,13 @@
 
 namespace App\Filament\Resources\SectionResource\RelationManagers;
 
+use App\Models\Category;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class CategoriesRelationManager extends RelationManager
 {
@@ -23,14 +25,21 @@ class CategoriesRelationManager extends RelationManager
                 Forms\Components\TextInput::make('name')
                     ->label('Tên danh mục')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(function (string $state, Forms\Set $set) {
+                        $set('slug', Str::slug($state));
+                    }),
+
+                Forms\Components\TextInput::make('slug')
+                    ->label('Slug')
+                    ->required()
+                    ->maxLength(255)
+                    ->unique(ignoreRecord: true),
 
                 Forms\Components\Select::make('status')
                     ->label('Trạng thái')
-                    ->options([
-                        'visible' => 'Hiển thị',
-                        'hidden' => 'Ẩn',
-                    ])
+                    ->options(Category::getStatuses())
                     ->default('hidden')
                     ->required(),
 
@@ -40,11 +49,6 @@ class CategoriesRelationManager extends RelationManager
                     ->directory('categories')
                     ->preserveFilenames()
                     ->maxSize(2048),
-
-                Forms\Components\TextInput::make('sort_order')
-                    ->label('Thứ tự sắp xếp')
-                    ->numeric()
-                    ->default(0),
 
                 Forms\Components\RichEditor::make('description')
                     ->label('Mô tả')
@@ -66,7 +70,9 @@ class CategoriesRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\ImageColumn::make('thumbnail')
                     ->label('Ảnh')
-                    ->circular(),
+                    ->defaultImageUrl(url('/images/placeholder.png'))
+                    ->width(100)
+                    ->height(100),
 
                 Tables\Columns\TextColumn::make('name')
                     ->label('Tên danh mục')
@@ -78,17 +84,13 @@ class CategoriesRelationManager extends RelationManager
                     ->counts('products')
                     ->sortable(),
 
-                Tables\Columns\SelectColumn::make('status')
+                Tables\Columns\BadgeColumn::make('status')
                     ->label('Trạng thái')
-                    ->options([
-                        'visible' => 'Hiển thị',
-                        'hidden' => 'Ẩn',
+                    ->colors([
+                        'success' => 'visible',
+                        'danger' => 'hidden',
                     ])
-                    ->sortable(),
-
-                Tables\Columns\TextColumn::make('sort_order')
-                    ->label('Thứ tự')
-                    ->numeric()
+                    ->formatStateUsing(fn (string $state): string => Category::getStatuses()[$state])
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('created_at')
@@ -99,28 +101,57 @@ class CategoriesRelationManager extends RelationManager
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
                     ->label('Trạng thái')
-                    ->options([
-                        'visible' => 'Hiển thị',
-                        'hidden' => 'Ẩn',
-                    ]),
+                    ->options(Category::getStatuses()),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                    ->label('Thêm danh mục')
-                    ->modalHeading('Thêm danh mục mới'),
+                    ->label('Tạo danh mục mới')
+                    ->modalHeading('Tạo danh mục mới'),
+
+                Tables\Actions\Action::make('add_existing')
+                    ->label('Thêm danh mục có sẵn')
+                    ->form([
+                        Forms\Components\Select::make('category_id')
+                            ->label('Chọn danh mục')
+                            ->options(
+                                Category::whereNull('section_id')
+                                    ->pluck('name', 'id')
+                            )
+                            ->searchable()
+                            ->preload()
+                            ->required(),
+                    ])
+                    ->action(function (array $data): void {
+                        Category::find($data['category_id'])->update([
+                            'section_id' => $this->ownerRecord->id
+                        ]);
+                    }),
             ])
             ->actions([
+                Tables\Actions\Action::make('view_category')
+                    ->label('Xem danh mục')
+                    ->url(fn (Category $record): string => route('filament.admin.resources.categories.edit', $record))
+                    ->icon('heroicon-m-arrow-top-right-on-square')
+                    ->openUrlInNewTab(),
+
                 Tables\Actions\EditAction::make()
                     ->label('Sửa'),
-                Tables\Actions\DeleteAction::make()
-                    ->label('Xóa'),
+
+                Tables\Actions\Action::make('detach')
+                    ->label('Gỡ khỏi phân mục')
+                    ->color('danger')
+                    ->icon('heroicon-m-x-mark')
+                    ->requiresConfirmation()
+                    ->action(fn (Category $record) => $record->update(['section_id' => null])),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make()
-                        ->label('Xóa đã chọn'),
-                ]),
+                Tables\Actions\BulkAction::make('detach_selected')
+                    ->label('Gỡ các mục đã chọn')
+                    ->color('danger')
+                    ->icon('heroicon-m-x-mark')
+                    ->requiresConfirmation()
+                    ->action(fn ($records) => $records->each->update(['section_id' => null])),
             ])
-            ->defaultSort('sort_order', 'asc');
+            ->defaultSort('created_at', 'desc');
     }
 }

@@ -10,11 +10,14 @@ class Version extends Model
     use HasFactory;
 
     protected $fillable = [
-        'product_id',
         'name',
+        'thumbnail',
         'price',
-        'stock',
-        'sku',
+        'discount_percentage',
+        'is_in_stock',
+        'status',   
+        'product_id',
+        
     ];
 
     protected $casts = [
@@ -36,5 +39,14 @@ class Version extends Model
     public function cartItems()
     {
         return $this->hasMany(CartItem::class);
+    }
+
+    /**
+     * Get all combos that contain this version through combo items.
+     */
+    public function combos()
+    {
+        return $this->belongsToMany(Combo::class, 'combo_items')
+            ->withPivot('quantity');
     }
 }

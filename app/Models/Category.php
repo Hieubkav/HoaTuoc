@@ -4,35 +4,39 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'name',
         'slug',
         'description',
-        'parent_id',
-        'section_id',
-        'status',
         'thumbnail',
+        'status',
+        'section_id',
+    ];
+
+    protected $casts = [
+        'status' => 'string',
     ];
 
     /**
-     * Get the parent category.
+     * Available status values
      */
-    public function parent()
-    {
-        return $this->belongsTo(Category::class, 'parent_id');
-    }
+    protected static $statuses = [
+        'visible' => 'Hiển thị',
+        'hidden' => 'Ẩn',
+    ];
 
     /**
-     * Get the child categories.
+     * Get all available statuses.
      */
-    public function children()
+    public static function getStatuses(): array
     {
-        return $this->hasMany(Category::class, 'parent_id');
+        return static::$statuses;
     }
 
     /**

@@ -11,7 +11,7 @@ class ComboItem extends Model
 
     protected $fillable = [
         'quantity',
-        'product_id',
+        'version_id',
         'combo_id',
     ];
 
@@ -28,10 +28,10 @@ class ComboItem extends Model
     }
 
     /**
-     * Get the product of the combo item.
+     * Get the version of the combo item.
      */
-    public function product()
+    public function version()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Version::class);
     }
 }

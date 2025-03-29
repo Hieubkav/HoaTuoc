@@ -36,11 +36,11 @@ class Combo extends Model
     }
 
     /**
-     * Get all products in the combo through combo items.
+     * Get all versions in the combo through combo items.
      */
-    public function products()
+    public function versions()
     {
-        return $this->belongsToMany(Product::class, 'combo_items')
+        return $this->belongsToMany(Version::class, 'combo_items')
             ->withPivot('quantity');
     }
 }

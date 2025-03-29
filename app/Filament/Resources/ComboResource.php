@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ComboResource\Pages;
+use App\Filament\Resources\ComboResource\RelationManagers\VersionsRelationManager;
 use App\Models\Combo;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -14,7 +15,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 
 class ComboResource extends Resource
@@ -28,6 +28,7 @@ class ComboResource extends Resource
     protected static ?string $modelLabel = 'Combo';
     
     protected static ?string $pluralModelLabel = 'Combo';
+
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
@@ -150,7 +151,7 @@ class ComboResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            VersionsRelationManager::class,
         ];
     }
     
