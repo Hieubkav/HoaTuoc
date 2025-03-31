@@ -4,33 +4,28 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Coupon extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'name',
+        'description',
         'code',
-        'type',
+        'status',
+        'thumbnail',
         'value',
-        'min_order_value',
-        'max_discount',
-        'starts_at',
-        'expires_at',
-        'usage_limit',
-        'used_count',
-        'is_active',
+        'is_percentage',
+        'valid_until',
     ];
 
     protected $casts = [
         'value' => 'decimal:2',
-        'min_order_value' => 'decimal:2',
-        'max_discount' => 'decimal:2',
-        'starts_at' => 'datetime',
-        'expires_at' => 'datetime',
-        'usage_limit' => 'integer',
-        'used_count' => 'integer',
-        'is_active' => 'boolean',
+        'is_percentage' => 'boolean',
+        'valid_until' => 'datetime',
+        'status' => 'string',
     ];
 
     /**
@@ -47,9 +42,7 @@ class Coupon extends Model
     public function isValidNow()
     {
         $now = now();
-        return $this->is_active &&
-               ($this->starts_at === null || $this->starts_at <= $now) &&
-               ($this->expires_at === null || $this->expires_at >= $now) &&
-               ($this->usage_limit === null || $this->used_count < $this->usage_limit);
+        return $this->status === 'active' && 
+               ($this->valid_until === null || $this->valid_until >= $now);
     }
 }

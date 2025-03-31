@@ -28,6 +28,6 @@ class Setting extends Model
     protected $casts = [
         'shipping_fee' => 'decimal:2',
         'global_discount_percentage' => 'decimal:2',
-        'address' => 'json',
+        'address' => 'string',
     ];
 }

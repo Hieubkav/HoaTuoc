@@ -48,13 +48,16 @@
 
 <body class="antialiased overflow-x-hidden">
 
-{{-- @include('component.shop.navbar') --}}
+<x-shop.navigation-bar />
+<x-shop.sub-navigation />
+<x-shop.menu-component />
+
 <main class="bg-gray-100 overflow-x-hidden">
     @yield('content')
 </main>
-{{-- @include('component.shop.footer')
-@include('component.shop.speedial') --}}
-{{--@include('component.shop.modal')--}}
+
+<x-shop.footer-section />
+<x-shop.speed-dial />
 
 @livewire('notifications')
 

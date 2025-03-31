@@ -7,7 +7,7 @@ return [
     'column_name' => [
         'order' => 'order',
         'parent' => 'parent_id',
-        'title' => 'name',
+        'title' => 'label',
     ],
     /**
      * Tree model default parent key

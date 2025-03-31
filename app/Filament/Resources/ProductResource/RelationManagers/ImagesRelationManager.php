@@ -14,13 +14,13 @@ class ImagesRelationManager extends RelationManager
 
     protected static ?string $title = 'Hình ảnh';
 
-    protected static ?string $recordTitleAttribute = 'image_path';
+    protected static ?string $recordTitleAttribute = 'image_url';
 
     public function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\FileUpload::make('image_path')
+                Forms\Components\FileUpload::make('image_url')
                     ->label('Hình ảnh')
                     ->image()
                     ->required()
@@ -43,7 +43,7 @@ class ImagesRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('image_path')
+                Tables\Columns\ImageColumn::make('image_url')
                     ->label('Ảnh')
                     ->square(),
 
@@ -67,8 +67,30 @@ class ImagesRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                    ->label('Thêm hình ảnh')
-                    ->modalHeading('Thêm hình ảnh mới'),
+                    ->label('Thêm một hình')
+                    ->modalHeading('Thêm một hình ảnh'),
+                
+                Tables\Actions\Action::make('uploadMultiple')
+                    ->label('Tải nhiều hình')
+                    ->modalHeading('Tải nhiều hình ảnh')
+                    ->icon('heroicon-o-photo')
+                    ->form([
+                        Forms\Components\FileUpload::make('images')
+                            ->label('Chọn nhiều hình')
+                            ->multiple()
+                            ->image()
+                            ->imageEditor()
+                            ->maxSize(2048)
+                            ->directory('products/gallery')
+                            ->preserveFilenames(),
+                    ])
+                    ->action(function (array $data): void {
+                        foreach ($data['images'] as $image) {
+                            $this->getOwnerRecord()->images()->create([
+                                'image_url' => $image
+                            ]);
+                        }
+                    })
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
@@ -83,7 +105,6 @@ class ImagesRelationManager extends RelationManager
                         ->label('Xóa đã chọn'),
                 ]),
             ])
-            ->defaultSort('order', 'asc')
-            ->reorderable('order');
+            ;
     }
 }

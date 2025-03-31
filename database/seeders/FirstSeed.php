@@ -30,14 +30,7 @@ class FirstSeed extends Seeder
         // 1. Settings
         Setting::create([
             'brand_name' => 'Hòa Tuộc - Hải sản tươi sống',
-            'address' => json_encode([
-                'saigon' => [
-                    'name' => 'Chi nhánh Sài Gòn',
-                    'address' => '123 Nguyễn Văn Quá, Quận 12, TP. HCM',
-                    'phone' => '028.1234.5678',
-                    'map' => 'https://maps.google.com/...',
-                ],
-            ]),
+            'address' => '123 Nguyễn Văn Quá, Quận 12, TP. HCM',
             'phone' => '1900.1234',
             'email' => 'contact@hoatuoc.com',
             'facebook_link' => 'https://facebook.com/hoatuoc',

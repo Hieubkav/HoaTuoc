@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CategoryResource\Pages;
-use App\Filament\Resources\CategoryResource\RelationManagers;
+use App\Filament\Resources\CategoryResource\RelationManagers\ProductsRelationManager;
 use App\Models\Category;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -87,6 +87,12 @@ class CategoryResource extends Resource
     {
         return $table
             ->columns([
+                // Cột số lượng sản phẩm
+                Tables\Columns\TextColumn::make('products_count')
+                    ->label('Số sản phẩm')
+                    ->counts('products')
+                    ->sortable(),
+                
                 Tables\Columns\ImageColumn::make('thumbnail')
                     ->label('Ảnh')
                     ->defaultImageUrl(url('/images/placeholder.png'))
@@ -155,6 +161,13 @@ class CategoryResource extends Resource
             'index' => Pages\ListCategories::route('/'),
             'create' => Pages\CreateCategory::route('/create'),
             'edit' => Pages\EditCategory::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            ProductsRelationManager::class
         ];
     }
 
