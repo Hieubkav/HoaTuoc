@@ -19,6 +19,10 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('thumbnail')->nullable();
             
+            // Price information
+            $table->decimal('price', 12, 0)->default(0);
+            $table->decimal('sale_price', 12, 0)->nullable();
+            
             $table->timestamps();
             $table->softDeletes();
             $table->index('name');

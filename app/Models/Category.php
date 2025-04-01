@@ -54,4 +54,16 @@ class Category extends Model
     {
         return $this->belongsTo(Section::class);
     }
+
+    /**
+     * Scope a query to get Flash Sale products.
+     */
+    public function scopeFlashSale($query)
+    {
+        return $query->where('name', 'Flash Sale')
+            ->with(['products' => function($query) {
+                
+                $query->orderBy('created_at', 'desc');
+            }]);
+    }
 }

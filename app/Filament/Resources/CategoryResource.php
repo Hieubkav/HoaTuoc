@@ -74,7 +74,7 @@ class CategoryResource extends Resource
                     ->relationship(
                         'section',
                         'name',
-                        fn (Builder $query) => $query->where('status', 'visible')
+                        // fn (Builder $query) => $query->where('status', 'visible')
                     )
                     ->label('Thuộc phân mục')
                     ->required()

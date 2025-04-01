@@ -13,11 +13,18 @@ class Product extends Model
     protected $fillable = [
         'name',
         'description',
-        'thumbnail'
+        'thumbnail',
+        'price',
+        'sale_price'
+    ];
+
+    protected $casts = [
+        'price' => 'decimal:0',
+        'sale_price' => 'decimal:0'
     ];
 
     /**
-     * Get the categories for the product.
+     * Get the categories that own the product.
      */
     public function categories()
     {
@@ -32,9 +39,6 @@ class Product extends Model
         return $this->hasMany(Version::class);
     }
 
-    /**
-     * Get the product images.
-     */
     public function images()
     {
         return $this->hasMany(ProductImage::class);

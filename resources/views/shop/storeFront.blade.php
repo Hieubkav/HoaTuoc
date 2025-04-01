@@ -4,6 +4,9 @@
     {{-- Banner Carousel với 2 ảnh --}}
     <x-storeFront.carousel-banner-image />
 
+    {{-- Phân mục nổi bật --}}
+    <x-storeFront.featured-category />
+
     {{-- Flash Sale Carousel --}}
     <x-storeFront.flash-sale-carousel />
 

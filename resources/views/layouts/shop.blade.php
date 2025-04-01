@@ -7,6 +7,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     {{-- <link rel="canonical" href="https://www.prohardware.com.vn">
     <meta name="description" content="Nhà Bếp AAA - Cung cấp phụ kiện nhà bếp cao cấp, thiết kế thông minh, với chất lượng vượt trội, mang đến giải pháp tối ưu cho không gian bếp của bạn.">
     <meta name="keywords" content="Nhà Bếp AAA, phụ kiện nhà bếp, bếp từ, bồn rửa chén, máy hút mùi, máy rửa bát, thiết kế thông minh, không gian bếp hiện đại">
@@ -39,6 +42,15 @@
         [x-cloak] {
             display: none !important;
         }
+        
+        ::selection {
+            background: rgba(6,182,212,0.3);
+            color: #fff;
+        }
+        
+        .text-glow {
+            text-shadow: 0 0 10px rgba(6,182,212,0.5);
+        }
     </style>
 
     @filamentStyles
@@ -48,8 +60,8 @@
 
 <body class="antialiased overflow-x-hidden">
 
-<x-shop.navigation-bar />
 <x-shop.sub-navigation />
+<x-shop.navigation-bar />
 <x-shop.menu-component />
 
 <main class="bg-gray-100 overflow-x-hidden">
